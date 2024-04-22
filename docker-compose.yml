@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  registry:
+    image: registry:2
+    restart: always
+    ports:
+      - "5051:5000"
+    environment:
+#      REGISTRY_AUTH: htpasswd
+#      REGISTRY_AUTH_HTPASSWD_REALM: Registry-Realm
+#      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.passwd
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+    volumes:
+      - registrydata:/data
+      - ./auth:/auth
+    networks:
+      - local
+
+  ui:
+    image: joxit/docker-registry-ui:latest
+    ports:
+      - 8083:80
+    environment:
+      - REGISTRY_TITLE=My Private Docker Registry
+      - REGISTRY_URL=http://registry.localhost:8082
+      - SINGLE_REGISTRY=true
+    depends_on:
+      - registry
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8082:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - local
+
+
+networks:
+  local:
+volumes:
+  registrydata:
+    driver: local
