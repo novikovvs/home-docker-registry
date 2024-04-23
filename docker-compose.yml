@@ -9,11 +9,11 @@ services:
     environment:
 #      REGISTRY_AUTH: htpasswd
 #      REGISTRY_AUTH_HTPASSWD_REALM: Registry-Realm
-#      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.passwd
+#      REGISTRY_AUTH_HTPASSWD_PATH: /auth-htpswd/registry.passwd
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
     volumes:
       - registrydata:/data
-      - ./auth:/auth
+      - ./auth-htpswd:/auth
     networks:
       - local
 
